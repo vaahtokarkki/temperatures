@@ -1,0 +1,35 @@
+version: '3.7'
+
+services:
+    db:
+        image: postgres
+        volumes:
+            - postgres-data:/var/lib/postgresql
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASS: postgres
+          POSTGRES_DBNAME: postgres
+          ALLOW_IP_RANGE: 0.0.0.0/0
+        expose:
+          - 5432
+    backend:
+        build: .
+        container_name: backend
+        command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /code/manage.py runserver 0.0.0.0:8000'
+        volumes:
+            - ./app:/code
+        environment:
+            DJANGO_SETTINGS_MODULE: garden.settings
+            DJANGO_SECRET:
+        depends_on:
+        - db
+        ports:
+            - "8000:8000"
+    adminer:
+        image: adminer
+        depends_on:
+        - db
+        ports:
+            - "8080:8080"
+volumes:
+    postgres-data:

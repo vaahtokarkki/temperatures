@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <title>Garden of Myllypuro</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <style>
+          body {
+            padding-top: 5rem;
+          }
+          .container {
+            padding: 1rem 0;
+          }
+
+          .latest, .night-low {
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: .5rem;
+            margin-bottom: 1.5rem;
+          }
+
+          .card {
+            margin: 1rem;
+            width: 12rem;
+            min-width: 10rem;
+          }
+
+          .card-text {
+            margin-bottom: .5rem;
+          }
+
+          .card .card-body {
+            padding: 1rem;
+          }
+
+          .card .value {
+            font-size: 1.5rem;
+            margin-bottom: 0;
+          }
+
+          .card .value.blue {
+            color: blue;
+          }
+
+          .card .value.red {
+            color: red;
+          }
+
+          .card .value.green {
+            color: green;
+          }
+
+        </style>
+    </head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+          <a class="navbar-brand" href="#">Garden of Myllypuro</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item active">
+                <a class="nav-link" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/graphs">Graphs</a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <main role="main" class="container">
+          <h2>Latest measurements</h2>
+          <div class="latest">
+            {% for measurement in latest_measurements %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Sensor {{ measurement.sensor }}</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Temperature</h6>
+                <hr>
+                <p class="card-text">
+                  {{ measurement.mins_ago }} minutes ago<br>
+                  <span class="text-muted">{{ measurement.timestamp }}</span>
+                </p>
+                {% if measurement.value <= 20 %}
+                <p class="value blue">
+                {% elif measurement.value <= 27 %}
+                <p class="value green">
+                {% else %}
+                <p class="value red">
+                {% endif %}
+                  <span>{{ measurement.value }} C</span>
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+          <h2>Night low</h2>
+          <div class="night-low">
+            {% for measurement in night_low %}
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Sensor {{ measurement.sensor }}</h5>
+                <p class="card-text">
+                  {{ measurement.timestamp }}
+                </p>
+                {% if measurement.value <= 20 %}
+                <p class="value blue">
+                {% elif measurement.value <= 27 %}
+                <p class="value green">
+                {% else %}
+                <p class="value red">
+                {% endif %}
+                  <span>{{ measurement.value }} C</span>
+                </p>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+
+        </main>
+  </body>
+</html>
