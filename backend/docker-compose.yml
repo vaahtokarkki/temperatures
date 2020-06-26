@@ -7,7 +7,7 @@ services:
             - postgres-data:/var/lib/postgresql
         environment:
           POSTGRES_USER: postgres
-          POSTGRES_PASS: postgres
+          POSTGRES_PASSWORD: postgres
           POSTGRES_DBNAME: postgres
           ALLOW_IP_RANGE: 0.0.0.0/0
         expose:
@@ -25,11 +25,5 @@ services:
         - db
         ports:
             - "8000:8000"
-    adminer:
-        image: adminer
-        depends_on:
-        - db
-        ports:
-            - "8080:8080"
 volumes:
     postgres-data:
