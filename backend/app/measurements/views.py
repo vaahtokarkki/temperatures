@@ -1,6 +1,7 @@
 import json
 from datetime import timedelta
 
+from django.db.models import Avg
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.utils import timezone
@@ -31,7 +32,11 @@ def index(request):
         .filter(timestamp__gt=now - timedelta(days=1)) \
         .order_by('sensor', '-timestamp').distinct('sensor')
 
-    print(measurements_of_night, latest_measurements)
+    averages = Measurement.objects \
+        .filter(timestamp__gt=now - timedelta(hours=1)) \
+        .values('sensor').annotate(avg=Avg('value'))
+    averages_by_sensor = {sensor["sensor"]: sensor["avg"] for sensor in averages}
+    print(averages_by_sensor)
 
     context = {
         "latest_measurements": [{
@@ -39,7 +44,8 @@ def index(request):
             "value": measurement.value,
             "type": "temperature",
             "timestamp": measurement.timestamp.strftime("%H:%M %d.%m."),
-            "mins_ago": get_minutes(now - measurement.timestamp)
+            "mins_ago": get_minutes(now - measurement.timestamp),
+            "hour_avg": averages_by_sensor[measurement.sensor]
         } for measurement in latest_measurements],
         "night_low": [{
             "sensor": measurement.sensor,

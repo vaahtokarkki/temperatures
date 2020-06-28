@@ -23,8 +23,8 @@
             min-width: 10rem;
           }
 
-          .card-text {
-            margin-bottom: .5rem;
+          .card-text, p {
+            margin-bottom: .0rem;
           }
 
           .card .card-body {
@@ -81,15 +81,28 @@
                 <p class="card-text">
                   {{ measurement.mins_ago }} minutes ago<br>
                   <span class="text-muted">{{ measurement.timestamp }}</span>
+                  {% if measurement.value <= 20 %}
+                  <p class="value blue">
+                  {% elif measurement.value <= 27 %}
+                  <p class="value green">
+                  {% else %}
+                  <p class="value red">
+                  {% endif %}
+                    <span>{{ measurement.value }} C</span>
+                  </p>
                 </p>
-                {% if measurement.value <= 20 %}
-                <p class="value blue">
-                {% elif measurement.value <= 27 %}
-                <p class="value green">
-                {% else %}
-                <p class="value red">
-                {% endif %}
-                  <span>{{ measurement.value }} C</span>
+                <hr>
+                <p>
+                  Last hour average
+                  {% if measurement.hour_avg <= 20 %}
+                  <p class="value blue">
+                  {% elif measurement.hour_avg <= 27 %}
+                  <p class="value green">
+                  {% else %}
+                  <p class="value red">
+                  {% endif %}
+                    <span>{{ measurement.hour_avg }} C</span>
+                  </p>
                 </p>
               </div>
             </div>

@@ -4,7 +4,7 @@ services:
     db:
         image: postgres
         volumes:
-            - pgdata:/var/lib/postgresql
+            - pgdata:/var/lib/postgresql/data:rw
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -15,18 +15,12 @@ services:
     backend:
         build: .
         container_name: backend
-        command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /code/manage.py runserver 0.0.0.0:8000'
+        command: bash -c 'while !</dev/tcp/db/5432; do sleep 1; done; python /code/manage.py runserver 0.0.0.0:8080'
         volumes:
             - ./app:/code
         environment:
             DJANGO_SETTINGS_MODULE: garden.settings
             DJANGO_SECRET:
-        depends_on:
-        - db
-        ports:
-            - "8000:8000"
-    adminer:
-        image: adminer
         depends_on:
         - db
         ports:
