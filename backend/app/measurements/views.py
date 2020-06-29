@@ -36,7 +36,6 @@ def index(request):
         .filter(timestamp__gt=now - timedelta(hours=1)) \
         .values('sensor').annotate(avg=Avg('value'))
     averages_by_sensor = {sensor["sensor"]: sensor["avg"] for sensor in averages}
-    print(averages_by_sensor)
 
     context = {
         "latest_measurements": [{
@@ -45,7 +44,7 @@ def index(request):
             "type": "temperature",
             "timestamp": measurement.timestamp.strftime("%H:%M %d.%m."),
             "mins_ago": get_minutes(now - measurement.timestamp),
-            "hour_avg": averages_by_sensor[measurement.sensor]
+            "hour_avg": round(averages_by_sensor[measurement.sensor], 2)
         } for measurement in latest_measurements],
         "night_low": [{
             "sensor": measurement.sensor,

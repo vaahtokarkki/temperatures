@@ -37,10 +37,10 @@ def get_night_low_measurements():
     yesterday = now - timedelta(days=1)
     tomorrow = now + timedelta(days=1)
 
-    night_start_timestamp = now if now.hour < NIGHT_START else yesterday
+    night_start_timestamp = now if now.hour > NIGHT_START else yesterday
     night_start_timestamp = night_start_timestamp \
         .replace(hour=NIGHT_START, minute=0, second=0, microsecond=0)
-    night_end_timestamp = tomorrow if now.hour <= 23 else now
+    night_end_timestamp = tomorrow if now.hour >= 23 else now
     night_end_timestamp = night_end_timestamp \
         .replace(hour=NIGHT_END, minute=0, second=0, microsecond=0)
 
