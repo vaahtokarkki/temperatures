@@ -50,10 +50,9 @@
 
         </style>
     </head>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <body>
         <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-          <a class="navbar-brand" href="#">Garden of Myllypuro</a>
+          <a class="navbar-brand" href="/">Garden of Myllypuro</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -61,7 +60,7 @@
           <div class="collapse navbar-collapse" id="navbarsExampleDefault">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item active">
-                <a class="nav-link" href="#">Home</a>
+                <a class="nav-link" href="/">Home</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="/graphs">Graphs</a>
@@ -102,6 +101,19 @@
                   <p class="value red">
                   {% endif %}
                     <span>{{ measurement.hour_avg }} C</span>
+                  </p>
+                  {% if measurement.hour_delta < 0 %}
+                  <p class="value blue">
+                  {% else %}
+                  <p class="value red">
+                  {% endif %}
+                    <span>{{ measurement.hour_delta }}
+                      {% if measurement.hour_delta < 0 %}
+                      ↓
+                      {% else %}
+                      ↑
+                      {% endif %}
+                    </span>
                   </p>
                 </p>
               </div>

@@ -1,7 +1,7 @@
 from datetime import timedelta
-
+import hashlib
 from django.utils import timezone
-
+from django.conf import settings
 from .models import Measurement
 
 
@@ -11,6 +11,17 @@ NIGHT_END = 4
 
 def get_minutes(delta):
     return (delta.seconds % 3600) // 60
+
+
+def authorized(request):
+    if not settings.API_TOKEN:
+        return True
+
+    if 'Authorazion' not in request.headers:
+        return False
+    token = request.headers["Authorazion"]
+    hash = hashlib.sha256(bytes(settings.API_TOKEN, 'utf-8')).hexdigest()
+    return token == f'Basic {hash}'
 
 
 def save_measurement(data):
