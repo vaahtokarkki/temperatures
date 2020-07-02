@@ -58,3 +58,32 @@ def get_night_low_measurements():
     return Measurement.objects \
         .filter(timestamp__gt=night_start_timestamp, timestamp__lt=night_end_timestamp) \
         .order_by("sensor", "value").distinct("sensor")
+
+
+def get_measurements_from_now(hours, sensor=None, measurement_type=None):
+    """
+    Retrieve measurements from current time until given amount of hours. If a sensor is
+    given, include only measurements from given sensor. If a type is given, include only 
+    measurements of given type.
+
+    Args:
+        hours (int): Limit results to only hours old measurements
+        sensor (String, List<String>): Filter measurements to only given sensor
+        measurement_type: (int, List<int>): Filter measurements to only given type
+    Returns:
+        A queryset
+    """
+    limit_timestamp = timezone.now() - timedelta(hours=hours)
+    queryset = Measurement.objects.filter(timestamp__gt=limit_timestamp)
+
+    if isinstance(sensor, list):
+        queryset = queryset.filter(sensor__in=sensor)
+    elif sensor:
+        queryset = queryset.filter(sensor=sensor)
+    
+    if isinstance(measurement_type, list):
+        queryset = queryset.filter(type__in=measurement_type)
+    elif measurement_type:
+        queryset = queryset.filter(type=measurement_type)
+    
+    return queryset.order_by("timestamp")
