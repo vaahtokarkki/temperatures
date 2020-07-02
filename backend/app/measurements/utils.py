@@ -1,20 +1,22 @@
-from datetime import timedelta
 import hashlib
-from django.utils import timezone
+from datetime import timedelta
+
 from django.conf import settings
+from django.utils import timezone
+
 from .models import Measurement
 
 
 NIGHT_START = 22
 NIGHT_END = 4
 COLORS = ["#f44336", "#E91E63", "#9C27B0", "#3F51B5", "#2196F3", "#009688", "#4CAF50",
-            "#FFEB3B", "#795548"]
+          "#FFEB3B", "#795548"]
 
 
 def get_minutes(delta):
     """
     Get minutes from a timedelta object.
-    
+
     Args:
         delta (Timedelta): A timedelta object
     Returns:
@@ -96,7 +98,7 @@ def get_night_low_measurements():
 def get_measurements_from_now(hours, sensor=None, measurement_type=None):
     """
     Retrieve measurements from current time until given amount of hours. If a sensor is
-    given, include only measurements from given sensor. If a type is given, include only 
+    given, include only measurements from given sensor. If a type is given, include only
     measurements of given type.
 
     Args:
@@ -113,10 +115,10 @@ def get_measurements_from_now(hours, sensor=None, measurement_type=None):
         queryset = queryset.filter(sensor__in=sensor)
     elif sensor:
         queryset = queryset.filter(sensor=sensor)
-    
+
     if isinstance(measurement_type, list):
         queryset = queryset.filter(type__in=measurement_type)
     elif measurement_type:
         queryset = queryset.filter(type=measurement_type)
-    
+
     return queryset.order_by("timestamp")
