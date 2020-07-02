@@ -1,0 +1,38 @@
+
+version: '3'
+
+services:
+  x86:
+    image: vaahtokarkki/temperatures:x86
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.x86
+    env_file:
+      - './.env'
+    volumes:
+      - .:/code
+    restart: unless-stopped
+    network_mode: host
+    privileged: true
+  armv6:
+    image: vaahtokarkki/temperatures:armv6
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.armv6
+    env_file:
+      - './.env'
+    volumes:
+      - .:/code
+    restart: unless-stopped
+    network_mode: host
+  armv7:
+    image: vaahtokarkki/temperatures:armv7
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile.armv7
+    env_file:
+      - './.env'
+    volumes:
+      - .:/code
+    restart: unless-stopped
+    network_mode: host
