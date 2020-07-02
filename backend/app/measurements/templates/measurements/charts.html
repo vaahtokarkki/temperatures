@@ -1,22 +1,41 @@
 <html>
     <head>
         <title>Garden of Myllypuro</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
         <style>
           body {
             padding-top: 5rem;
           }
           .container {
-            padding: 1rem 0;
+            padding: 1rem;
           }
 
-          .latest, .night-low {
-            display: flex;
-            flex-wrap: wrap;
-            margin-top: .5rem;
-            margin-bottom: 1.5rem;
+          #temperaturesChart {
+            margin-top: 2rem;
+            min-height: 300px;
+          }
+
+          .custom-select {
+            width: auto;
+          }
+
+          p {
+            margin: 1.5rem 0;
           }
         </style>
+        <script>
+          function handleLimitChange() {
+            var value = document.getElementById("limitSelect").value
+            window.location.href = location.origin + location.pathname + '?limit=' + value
+          }
+
+          window.onload = function(e) {
+            document.getElementById("limitSelect").value = {{ limit }}
+          }
+        </script>
     </head>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
     <body>
@@ -38,17 +57,52 @@
           </div>
         </nav>
         <main role="main" class="container">
-        <h1>Cool chart here</h1>
-        <canvas id="examChart"></canvas>
+        <h2>Temperatures</h2>
+        <p>Temperatures for last
+          <select id="limitSelect" onchange="handleLimitChange()" class="custom-select">
+            <option value="1">1 hour</option>
+            <option value="2">2 hours</option>
+            <option value="3">3 hours</option>
+            <option value="4">4 hours</option>
+            <option value="5">5 hours</option>
+            <option value="10">10 hours</option>
+            <option value="24">1 day</option>
+            <option value="48">2 days</option>
+            <option value="168">1 week</option>
+          </select>
+        </p>
+        <div class="chart-container"><canvas id="temperaturesChart"></canvas></div>
         <script>
-            var ctx = document.getElementById("examChart").getContext("2d");
+            var ctx = document.getElementById("temperaturesChart").getContext("2d");
+
+            function getLabels() {
+              var l = []
+              labs = {{labels|safe}}
+              return labs.map(l => new Date(l))
+            }
 
             var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ labels|safe }},
-                datasets: {{ datasets|safe }}
-            }
+              type: 'line',
+              data: {
+                  labels: {{ labels|safe }},
+                  datasets: {{ datasets|safe }}
+              },
+              options: {
+                maintainAspectRatio: false,
+                elements: {
+                    point:{
+                        radius: 0
+                    }
+                },
+                scales: {
+                  xAxes: [{
+                    ticks: {
+                        autoSkip: true,
+                        maxTicksLimit: 30
+                    }
+                  }]
+                }
+              }
             });
         </script>
         </main>
