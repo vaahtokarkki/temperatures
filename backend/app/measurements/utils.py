@@ -7,13 +7,31 @@ from .models import Measurement
 
 NIGHT_START = 22
 NIGHT_END = 4
+COLORS = ["#f44336", "#E91E63", "#9C27B0", "#3F51B5", "#2196F3", "#009688", "#4CAF50",
+            "#FFEB3B", "#795548"]
 
 
 def get_minutes(delta):
+    """
+    Get minutes from a timedelta object.
+    
+    Args:
+        delta (Timedelta): A timedelta object
+    Returns:
+        int: Minutes from timedelta
+    """
     return (delta.seconds % 3600) // 60
 
 
 def authorized(request):
+    """
+    Check if given request is authorized.
+
+    Args:
+        request: A Django request
+    Returns:
+        boolean: True if correct token is present, or authorazion is disabled.
+    """
     if not settings.API_TOKEN:
         return True
 
@@ -25,6 +43,13 @@ def authorized(request):
 
 
 def save_measurement(data):
+    """
+    Create measurement objects from given data.
+
+    Args:
+        data (List): List containing dicts with sensor and value attribute. Type is an
+        optional, and will default to temperature.
+    """
     sensor = data.get('sensor', None)
     value = data.get('value', None)
     type = data.get('type', None)
@@ -40,10 +65,18 @@ def save_measurement(data):
 
     measurement = Measurement(sensor=sensor, value=value, type=type)
     measurement.save()
-    return False
+    return True
 
 
 def get_night_low_measurements():
+    """
+    Retrieve measurements for all sensors containing lowest value of last night. Night is
+    treated as interval from 22.00 to 5.00. If method is run in this interval, last night
+    is used, not the current night, which is not over.
+
+    Returns:
+        Queryset containing lowest values for all sensors with measurements on last night
+    """
     now = timezone.now()
     yesterday = now - timedelta(days=1)
     tomorrow = now + timedelta(days=1)
